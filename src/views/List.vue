@@ -68,6 +68,7 @@
         </FormItem>
         <FormItem>
           <Button
+            size="small"
             type="primary"
             icon="ios-refresh"
             @click="handelReset"
@@ -76,12 +77,13 @@
             重置
           </Button>
           <Button
+            size="small"
             type="primary"
-            :loading="searching"
+            :loading="tableLoading"
             icon="ios-search"
             @click="handleSearch"
           >
-            <span v-if="!searching">查询</span>
+            <span v-if="!tableLoading">查询</span>
             <span v-else>查询中...</span>
           </Button>
         </FormItem>
@@ -115,7 +117,6 @@ export default {
   data() {
     return {
       tableLoading: false,
-      searching: false,
       FaultLevelMap,
       pageTotal: 0,
       PAGE_SIZE,

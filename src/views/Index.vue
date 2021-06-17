@@ -2,18 +2,30 @@
   <div class="index">
     <div class="title">首页</div>
     <SectionCard title="列车运行信息">
+      <div style="margin-bottom:10px">
+        <Button
+          icon="md-bus"
+          style="margin-right:5px;"
+          size="small"
+          :type="activeIndex === index ? 'primary' : 'default'"
+          v-for="(item, index) in lineList"
+          :key="item"
+          @click="onLineChange(index)"
+          >{{ item }}</Button
+        >
+      </div>
       <Table
         :columns="columns"
         :data="tableData"
         :loading="tableLoading"
       ></Table>
-      <br />
+      <!-- <br />
       <Page
         :page-size="PAGE_SIZE"
         :total="pageTotal"
         show-elevator
         @on-change="onPageChage"
-      />
+      /> -->
     </SectionCard>
     <Row style="margin-top:20px;">
       <Col span="12">
@@ -37,7 +49,7 @@
         </SectionCard>
       </Col>
       <Col span="12">
-        <SectionCard title="故障类型分布" style="margin-left:10px;">
+        <SectionCard title="故障类型分布" style="margin-left:10px;height:100%;">
           <v-chart
             v-if="pieChartData.length"
             :forceFit="true"
@@ -68,7 +80,12 @@
   </div>
 </template>
 <script>
-import { getTrainPage, getTodayFault, getTodayFaultSortByType } from '../api'
+import {
+  getTrainPage,
+  getTodayFault,
+  getTodayFaultSortByType,
+  getTrainLineList
+} from '../api'
 import {
   HttpStatus,
   HealthyStatusMap,
@@ -76,11 +93,13 @@ import {
   HealthyStatusTagMap
 } from '../libs/constant'
 
-const PAGE_SIZE = 5
+const PAGE_SIZE = 9999
 export default {
   name: 'Index',
   data() {
     return {
+      activeIndex: 0,
+      lineList: [],
       barChartData: [],
       pieChartData: [],
       height: 300,
@@ -174,6 +193,11 @@ export default {
       tableData: []
     }
   },
+  watch: {
+    activeIndex(val) {
+      this.getTableData()
+    }
+  },
   methods: {
     onPageChage(pageNum) {
       this.getTableData(pageNum)
@@ -181,6 +205,7 @@ export default {
     getTableData(pageNum = 1) {
       this.tableLoading = true
       getTrainPage({
+        lineCode: this.lineList[this.activeIndex],
         pageNum,
         pageSize: PAGE_SIZE
       })
@@ -207,31 +232,56 @@ export default {
         })
     },
     getTodayFault() {
-      getTodayFault().then((res) => {
-        if (res.code === HttpStatus.SUCCESS) {
-          this.barChartData = res.data
-        }
-      })
+      getTodayFault()
+        .then((res) => {
+          if (res.code === HttpStatus.SUCCESS) {
+            this.barChartData = res.data
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
     },
     getTodayFaultSortByType() {
-      getTodayFaultSortByType().then((res) => {
-        if (res.code === HttpStatus.SUCCESS) {
-          const DataSet = require('@antv/data-set')
-          const dv = new DataSet.View().source(res.data)
-          dv.transform({
-            type: 'percent',
-            field: 'faultNum',
-            dimension: 'faultCode',
-            as: 'percent'
-          })
-          this.pieChartData = dv.rows
-          console.log(this.pieChartData)
-        }
-      })
+      getTodayFaultSortByType()
+        .then((res) => {
+          if (res.code === HttpStatus.SUCCESS) {
+            const DataSet = require('@antv/data-set')
+            const dv = new DataSet.View().source(res.data)
+            dv.transform({
+              type: 'percent',
+              field: 'faultNum',
+              dimension: 'faultCode',
+              as: 'percent'
+            })
+            this.pieChartData = dv.rows
+            console.log(this.pieChartData)
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    getTrainLineList() {
+      getTrainLineList()
+        .then((res) => {
+          if (res.code === HttpStatus.SUCCESS) {
+            this.lineList = res.data
+            this.getTableData()
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
+    onLineChange(index) {
+      console.log(index)
+      this.activeIndex = index
     }
   },
   mounted() {
-    this.getTableData()
+    this.getTrainLineList()
+
     this.getTodayFault()
     this.getTodayFaultSortByType()
   }

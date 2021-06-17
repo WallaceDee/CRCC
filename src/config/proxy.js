@@ -1,14 +1,9 @@
 module.exports = {
-  '/train/': {
+  '/api/': {
     target: 'http://47.107.227.94:7798',
-    changeOrigin: true
-  },
-  '/fault/': {
-    target: 'http://47.107.227.94:7798',
-    changeOrigin: true
-  },
-  '/pis/': {
-    target: 'http://47.107.227.94:7798',
+    pathRewrite: {
+      '^/api': ''
+    },
     changeOrigin: true
   }
   // ,

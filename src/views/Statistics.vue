@@ -2,6 +2,7 @@
   <Row>
     <Col span="12">
       <SectionCard title="各列车故障统计" style="margin-right:5px">
+        <!-- <Spin fix></Spin> -->
         <Form ref="trainForm" :model="trainForm">
           <FormItem>
             <div slot="label">
@@ -21,7 +22,8 @@
                 v-for="(item, index) in trainCodeOptions"
                 :key="index"
                 :label="item"
-              >{{item}}</Checkbox>
+                >{{ item }}</Checkbox
+              >
             </CheckboxGroup>
           </FormItem>
           <FormItem label="统计周期">
@@ -42,23 +44,31 @@
           <v-tooltip />
           <v-axis />
           <v-legend />
-             <v-smooth-line position="date*faultNum" color="train" shape="smooth" />
+          <v-smooth-line
+            position="date*faultNum"
+            color="train"
+            shape="smooth"
+          />
         </v-chart>
       </SectionCard>
     </Col>
     <Col span="12">
-      <SectionCard :title="`${itemForm.trainCode} 车各设备故障统计`" style="margin-left:5px">
-        <Form ref="itemForm" :model="itemForm" >
+      <SectionCard
+        :title="`${itemForm.trainCode} 车各设备故障统计`"
+        style="margin-left:5px"
+      >
+        <Form ref="itemForm" :model="itemForm">
           <FormItem label="列车号" prop="trainCode">
-                     <!-- :remote-method="getAllTrainList" -->
-              <!-- :loading="trainCodeLoading" -->
-              <!-- @on-open-change="onTrainCodeSelectOpen" -->
+            <!-- :remote-method="getAllTrainList" -->
+            <!-- :loading="trainCodeLoading" -->
+            <!-- @on-open-change="onTrainCodeSelectOpen" -->
             <Select
               style="width:300px;"
               clearable
               v-model="itemForm.trainCode"
               filterable
-              placeholder="列车号">
+              placeholder="列车号"
+            >
               <Option
                 v-for="(trainCode, index) in trainCodeOptions"
                 :value="trainCode"
@@ -67,21 +77,25 @@
               >
             </Select>
           </FormItem>
-             <FormItem>
-                  <div slot="label">
+          <FormItem>
+            <div slot="label">
               设备类型
-           <Checkbox
-              :indeterminate="itemIndeterminate"
-              :value="itemCheckAll"
-              @click.prevent.native="handleItemCheckAll"
-              >全选</Checkbox
-            >
+              <Checkbox
+                :indeterminate="itemIndeterminate"
+                :value="itemCheckAll"
+                @click.prevent.native="handleItemCheckAll"
+                >全选</Checkbox
+              >
             </div>
             <CheckboxGroup
               v-model="itemForm.devType"
               @on-change="checkItemAllGroupChange"
             >
-              <Checkbox :label="item" v-for="item in devTypeOptions" :key="item"></Checkbox>
+              <Checkbox
+                :label="item"
+                v-for="item in devTypeOptions"
+                :key="item"
+              ></Checkbox>
             </CheckboxGroup>
           </FormItem>
           <FormItem label="统计周期">
@@ -102,26 +116,31 @@
           <v-tooltip />
           <v-axis />
           <v-legend />
-                       <v-smooth-line position="date*faultNum" color="item" shape="smooth" />
+          <v-smooth-line position="date*faultNum" color="item" shape="smooth" />
         </v-chart>
       </SectionCard>
     </Col>
   </Row>
 </template>
 <script>
-import { getAllTrainList, getChartData, getFaultTrainList,getDevTypeList } from '../api'
-import { HttpStatus,devTypeMap } from '../libs/constant'
+import {
+  getAllTrainList,
+  getChartData,
+  getFaultTrainList,
+  getDevTypeList
+} from '../api'
+import { HttpStatus, devTypeMap } from '../libs/constant'
 export default {
   name: 'Statistics',
   data() {
     return {
       itemChartData: [],
-      itemChartHistoryData:{},
-      devTypeOptions:[],
+      itemChartHistoryData: {},
+      devTypeOptions: [],
       trainCodeLoading: false,
       trainCodeOptions: [],
       trainChartData: [],
-      trainChartHistoryData:{},
+      trainChartHistoryData: {},
       scale: {
         dataKey: 'faultNum',
         min: 0
@@ -138,48 +157,48 @@ export default {
       itemCheckAll: true,
       itemForm: {
         timeType: 'month',
-        devType:[],
-        trainCode: '',
+        devType: [],
+        trainCode: ''
       }
     }
   },
   watch: {
-    'trainForm.timeType'(val){
-
-      if(this.trainChartHistoryData[val]){
+    'trainForm.timeType'(val) {
+      if (this.trainChartHistoryData[val]) {
         this.getTrainChartData(this.trainChartHistoryData[val].charData)
         return false
-      }else{
+      } else {
         this.getMultiTrainChartData()
       }
     },
-        'itemForm.timeType'(val){
-                console.log(this.itemChartHistoryData)
-      if(this.itemChartHistoryData[val]){
+    'itemForm.timeType'(val) {
+      console.log(this.itemChartHistoryData)
+      if (this.itemChartHistoryData[val]) {
         this.getItemChartData(this.itemChartHistoryData[val].charData)
         return false
-      }else{
+      } else {
         this.getMultiItemChartData()
       }
     },
-    'trainForm.codes'(val){
-      console.log(val)
+    'itemForm.trainCode'(val) {
+      this.itemChartHistoryData = {}
+      this.getMultiItemChartData()
     },
     trainCodeOptions(val) {
       console.log(val)
     }
   },
   methods: {
-        getDevTypeList() {
+    getDevTypeList() {
       if (this.devTypeOptions.length) {
         return false
       }
       this.devTypeLoading = true
-     return getDevTypeList()
+      return getDevTypeList()
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             this.devTypeOptions = res.data
-            this.itemForm.devType=this.devTypeOptions
+            this.itemForm.devType = this.devTypeOptions
           }
           this.devTypeLoading = false
         })
@@ -188,44 +207,44 @@ export default {
           this.devTypeLoading = false
         })
     },
-    trainFilter(codes){
-      let flag=codes.join(',')
-      return this.trainChartData.filter(item=>{
-        return flag.indexOf(item.train)!==-1
+    trainFilter(codes) {
+      let flag = codes.join(',')
+      return this.trainChartData.filter((item) => {
+        return flag.indexOf(item.train) !== -1
       })
     },
-    itemFilter(codes){
-      let flag=codes.join(',')
-      return this.itemChartData.filter(item=>{
-        return flag.indexOf(item.item)!==-1
+    itemFilter(codes) {
+      let flag = codes.join(',')
+      return this.itemChartData.filter((item) => {
+        return flag.indexOf(item.item) !== -1
       })
     },
-    getItemChartData(rawData){
-                let chartData = []
-            Object.keys(rawData).forEach((key) => {
-              rawData[key].forEach(({ faultNum, x }) => {
-                chartData.push({
-                  item: key,
-                  faultNum,
-                  date: x
-                })
-              })
-            })
-            console.log(chartData)
-         this.itemChartData= chartData
+    getItemChartData(rawData) {
+      let chartData = []
+      Object.keys(rawData).forEach((key) => {
+        rawData[key].forEach(({ faultNum, x }) => {
+          chartData.push({
+            item: key,
+            faultNum,
+            date: this.itemForm.timeType !== 'week' ? x : x + '周'
+          })
+        })
+      })
+      console.log(chartData)
+      this.itemChartData = chartData
     },
-        getTrainChartData(rawData){
-                let chartData = []
-            Object.keys(rawData).forEach((key) => {
-              rawData[key].forEach(({ faultNum, x }) => {
-                chartData.push({
-                  train: key,
-                  faultNum,
-                  date: x
-                })
-              })
-            })
-         this.trainChartData= chartData
+    getTrainChartData(rawData) {
+      let chartData = []
+      Object.keys(rawData).forEach((key) => {
+        rawData[key].forEach(({ faultNum, x }) => {
+          chartData.push({
+            train: key,
+            faultNum,
+            date: this.trainForm.timeType !== 'week' ? x : x + '周'
+          })
+        })
+      })
+      this.trainChartData = chartData
     },
     onTrainCodeSelectOpen(status) {
       // if (status) {
@@ -313,9 +332,9 @@ export default {
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             this.trainCodeOptions = res.data
-            this.$set(this.trainForm,'codes',this.trainCodeOptions)
-            this.$set(this.itemForm,'trainCode',this.trainCodeOptions[0])
-            this.getDevTypeList().then(()=>{
+            this.$set(this.trainForm, 'codes', this.trainCodeOptions)
+            this.$set(this.itemForm, 'trainCode', this.trainCodeOptions[0])
+            this.getDevTypeList().then(() => {
               this.getMultiItemChartData()
             })
             this.getMultiTrainChartData()
@@ -330,14 +349,14 @@ export default {
     getMultiTrainChartData() {
       let { timeType, codes } = this.trainForm
 
-        getChartData({
+      getChartData({
         dimension: 'date',
         timeType,
         codes: codes.join(',')
       })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
-            this.trainChartHistoryData[timeType]=res.data
+            this.trainChartHistoryData[timeType] = res.data
             this.getTrainChartData(res.data.charData)
           }
         })
@@ -345,19 +364,21 @@ export default {
           console.error(err)
         })
     },
-        getMultiItemChartData() {
-      let { timeType, trainCode,devType } = this.itemForm
-        getChartData({
+    getMultiItemChartData() {
+      let { timeType, trainCode, devType } = this.itemForm
+      getChartData({
         dimension: 'devType',
         timeType,
-        codes:trainCode,
-        devType: devType.map(item=>{
-          return devTypeMap.get(item)
-        }).join(',')
+        codes: trainCode,
+        devType: devType
+          .map((item) => {
+            return devTypeMap.get(item)
+          })
+          .join(',')
       })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
-            this.itemChartHistoryData[timeType]=res.data
+            this.itemChartHistoryData[timeType] = res.data
             this.getItemChartData(res.data.charData)
           }
         })

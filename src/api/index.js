@@ -83,3 +83,10 @@ export const getChartData = (params) => {
     method: 'get'
   })
 }
+
+export const getTrainLineList = () => {
+  return axios.request({
+    url: '/train/line/list',
+    method: 'get'
+  })
+}
