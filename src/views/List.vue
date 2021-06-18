@@ -198,8 +198,8 @@ export default {
       searchForm: {
         trainCode: null,
         devType: null,
-        isHidRepair: true,
-        isHidConfirm: true,
+        isHidRepair: false,
+        isHidConfirm: false,
         startTime: null,
         endTime: null
       }

@@ -37,8 +37,7 @@
             :data="barChartData"
             :padding="[20, 30, 50, 30]"
             :scale="{
-              dataKey: 'faultNum',
-              tickInterval: 1
+              dataKey: 'faultNum'
             }"
           >
             <v-tooltip />
@@ -55,7 +54,7 @@
             :forceFit="true"
             :height="height"
             :data="pieChartData"
-            :padding="[20, 30, 50, 30]"
+            :padding="[20, 30, 80, 30]"
             :scale="{
               dataKey: 'percent',
               min: 0,
