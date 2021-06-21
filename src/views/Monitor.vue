@@ -397,11 +397,12 @@ export default {
             let equipmentList = JSON.parse(JSON.stringify(this.equipmentList))
             this.info = res.data
             res.data.devInfo.forEach((item) => {
-              if (item.coachNo < 9) {
+              if (item.coachNo > 0 && item.coachNo < 9) {
                 equipmentList[item.coachNo - 1].children.push(item)
               }
             })
             this.equipmentList = equipmentList
+            console.log(equipmentList)
           }
           this.equipmentLoading = false
         })
@@ -480,6 +481,7 @@ export default {
     }
   },
   mounted() {
+    localStorage.setItem('currentTrainCode', this.trainCode)
     this.getTrainInfo()
     this.getTableData()
     this.getTrainTodayFault()
