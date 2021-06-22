@@ -197,7 +197,7 @@ import {
 } from '../api'
 import { HttpStatus, FaultLevelMap } from '../libs/constant'
 
-const PAGE_SIZE = 3
+const PAGE_SIZE = 10
 export default {
   name: 'Monitor',
   data() {

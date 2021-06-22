@@ -27,8 +27,7 @@ export const FaultLevelMap = new Map([
   ['2', '严重']
 ])
 
-
-export const devTypeMap = new Map([
+export const DevTypeMap = new Map([
   ['ACSU', 1],
   ['DACU', 2],
   ['PACU', 3],

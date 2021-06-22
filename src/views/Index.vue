@@ -192,9 +192,16 @@ export default {
       tableData: []
     }
   },
+  computed: {
+    lineCode() {
+      return this.lineList[this.activeIndex]
+    }
+  },
   watch: {
     activeIndex(val) {
       this.getTableData()
+      this.getTodayFault()
+      this.getTodayFaultSortByType()
     }
   },
   methods: {
@@ -204,7 +211,7 @@ export default {
     getTableData(pageNum = 1) {
       this.tableLoading = true
       getTrainPage({
-        lineCode: this.lineList[this.activeIndex],
+        lineCode: this.lineCode,
         pageNum,
         pageSize: PAGE_SIZE
       })
@@ -231,7 +238,9 @@ export default {
         })
     },
     getTodayFault() {
-      getTodayFault()
+      getTodayFault({
+        lineCode: this.lineCode
+      })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             this.barChartData = res.data
@@ -242,7 +251,9 @@ export default {
         })
     },
     getTodayFaultSortByType() {
-      getTodayFaultSortByType()
+      getTodayFaultSortByType({
+        lineCode: this.lineCode
+      })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             const DataSet = require('@antv/data-set')
@@ -262,11 +273,10 @@ export default {
         })
     },
     getTrainLineList() {
-      getTrainLineList()
+      return getTrainLineList()
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             this.lineList = res.data
-            this.getTableData()
           }
         })
         .catch((err) => {
@@ -279,10 +289,11 @@ export default {
     }
   },
   mounted() {
-    this.getTrainLineList()
-
-    this.getTodayFault()
-    this.getTodayFaultSortByType()
+    this.getTrainLineList().then(() => {
+      this.getTableData()
+      this.getTodayFault()
+      this.getTodayFaultSortByType()
+    })
   }
 }
 </script>

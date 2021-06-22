@@ -1,19 +1,19 @@
 <template>
-  <Row>
-    <Col span="12">
-      <SectionCard title="各列车故障统计" style="margin-right:5px">
-        <!-- <Spin fix></Spin> -->
+  <Row style="height:700px">
+    <Col span="12" style="height:100%">
+      <SectionCard
+        title="各列车故障统计"
+        style="margin-right:10px;height:100%;"
+      >
+        <Spin fix v-if="trainChartLoading"></Spin>
         <Form ref="trainForm" :model="trainForm">
           <FormItem>
-            <div slot="label">
-              列车号
-              <Checkbox
-                :indeterminate="trainIndeterminate"
-                :value="trainCheckAll"
-                @click.prevent.native="handleTrainCheckAll"
-                >全选</Checkbox
-              >
-            </div>
+            <Checkbox
+              :indeterminate="trainIndeterminate"
+              :value="trainCheckAll"
+              @click.prevent.native="handleTrainCheckAll"
+              >全选</Checkbox
+            >
             <CheckboxGroup
               v-model="trainForm.codes"
               @on-change="checkCarAllGroupChange"
@@ -52,11 +52,12 @@
         </v-chart>
       </SectionCard>
     </Col>
-    <Col span="12">
+    <Col span="12" style="height:100%">
       <SectionCard
         :title="`${itemForm.trainCode} 车各设备故障统计`"
-        style="margin-left:5px"
+        style="margin-left:10px;height:100%;"
       >
+        <Spin fix v-if="itemChartLoading"></Spin>
         <Form ref="itemForm" :model="itemForm">
           <FormItem label="列车号" prop="trainCode">
             <!-- :remote-method="getAllTrainList" -->
@@ -126,20 +127,22 @@
 import {
   getAllTrainList,
   getChartData,
-  getFaultTrainList,
+  // getFaultTrainList,
   getDevTypeList
 } from '../api'
-import { HttpStatus, devTypeMap } from '../libs/constant'
+import { HttpStatus, DevTypeMap } from '../libs/constant'
 export default {
   name: 'Statistics',
   data() {
     return {
+      itemChartLoading: false,
       itemChartData: [],
       itemChartHistoryData: {},
       devTypeOptions: [],
       trainCodeLoading: false,
       trainCodeOptions: [],
       trainChartData: [],
+      trainChartLoading: false,
       trainChartHistoryData: {},
       scale: {
         dataKey: 'faultNum',
@@ -246,31 +249,31 @@ export default {
       })
       this.trainChartData = chartData
     },
-    onTrainCodeSelectOpen(status) {
-      // if (status) {
-      //   this.getAllTrainList()
-      // }
-    },
-    getAllTrainList() {
-      if (this.trainCodeOptions.length) {
-        return false
-      }
-      this.trainCodeLoading = true
-      getAllTrainList({
-        pageSize: 99999
-      })
-        .then((res) => {
-          if (res.code === HttpStatus.SUCCESS) {
-            this.trainCodeOptions = res.data.records
-            console.log(this.trainCodeOptions)
-          }
-          this.trainCodeLoading = false
-        })
-        .catch((err) => {
-          console.error(err)
-          this.trainCodeLoading = false
-        })
-    },
+    // onTrainCodeSelectOpen(status) {
+    // if (status) {
+    //   this.getAllTrainList()
+    // }
+    // },
+    // getAllTrainList() {
+    //   if (this.trainCodeOptions.length) {
+    //     return false
+    //   }
+    //   this.trainCodeLoading = true
+    //   getAllTrainList({
+    //     pageSize: 99999
+    //   })
+    //     .then((res) => {
+    //       if (res.code === HttpStatus.SUCCESS) {
+    //         this.trainCodeOptions = res.data.records
+    //         console.log(this.trainCodeOptions)
+    //       }
+    //       this.trainCodeLoading = false
+    //     })
+    //     .catch((err) => {
+    //       console.error(err)
+    //       this.trainCodeLoading = false
+    //     })
+    // },
     handleTrainCheckAll() {
       if (this.trainIndeterminate) {
         this.trainCheckAll = false
@@ -323,15 +326,19 @@ export default {
         this.itemCheckAll = false
       }
     },
-    getFaultTrainList() {
+    getAllTrainList() {
       if (this.trainCodeOptions.length) {
         return false
       }
       this.trainCodeLoading = true
-      getFaultTrainList()
+      getAllTrainList({
+        pageSize: 99999
+      })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
-            this.trainCodeOptions = res.data
+            this.trainCodeOptions = res.data.records.map((item) => {
+              return item.trainCode
+            })
             this.$set(this.trainForm, 'codes', this.trainCodeOptions)
             this.$set(this.itemForm, 'trainCode', this.trainCodeOptions[0])
             this.getDevTypeList().then(() => {
@@ -348,7 +355,7 @@ export default {
     },
     getMultiTrainChartData() {
       let { timeType, codes } = this.trainForm
-
+      this.trainChartLoading = true
       getChartData({
         dimension: 'date',
         timeType,
@@ -359,20 +366,23 @@ export default {
             this.trainChartHistoryData[timeType] = res.data
             this.getTrainChartData(res.data.charData)
           }
+          this.trainChartLoading = false
         })
         .catch((err) => {
           console.error(err)
+          this.trainChartLoading = false
         })
     },
     getMultiItemChartData() {
       let { timeType, trainCode, devType } = this.itemForm
+      this.itemChartLoading = true
       getChartData({
         dimension: 'devType',
         timeType,
         codes: trainCode,
         devType: devType
           .map((item) => {
-            return devTypeMap.get(item)
+            return DevTypeMap.get(item)
           })
           .join(',')
       })
@@ -381,14 +391,16 @@ export default {
             this.itemChartHistoryData[timeType] = res.data
             this.getItemChartData(res.data.charData)
           }
+          this.itemChartLoading = false
         })
         .catch((err) => {
           console.error(err)
+          this.itemChartLoading = false
         })
     }
   },
   mounted() {
-    this.getFaultTrainList()
+    this.getAllTrainList()
   }
 }
 </script>

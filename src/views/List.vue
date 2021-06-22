@@ -32,7 +32,7 @@
           >
             <Option
               v-for="(option, index) in devTypeOptions"
-              :value="option"
+              :value="DevTypeMap.get(option)"
               :key="index"
               >{{ option }}</Option
             >
@@ -110,7 +110,7 @@ import {
   getFaultTrainList,
   getDevTypeList
 } from '../api'
-import { HttpStatus, FaultLevelMap } from '../libs/constant'
+import { HttpStatus, FaultLevelMap, DevTypeMap } from '../libs/constant'
 const PAGE_SIZE = 10
 export default {
   name: 'List',
@@ -118,6 +118,7 @@ export default {
     return {
       tableLoading: false,
       FaultLevelMap,
+      DevTypeMap,
       pageTotal: 0,
       PAGE_SIZE,
       columns: [
