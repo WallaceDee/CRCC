@@ -50,6 +50,8 @@
 </template>
 <script>
 import { getOAuth2Code } from '../libs/util'
+import { getTokenByCode, getUserInfoByToken } from '../api'
+import { HttpStatus } from '../libs/constant'
 import { Storage } from '../libs/tools'
 export default {
   name: 'Workbench',
@@ -84,28 +86,40 @@ export default {
     }
   },
   created() {
-    // let storage = new Storage()
-    // console.log(storage)
-    // const hasToken = !!localStorage.getItem('token')
-    // const code = this.$route.query.code
-    // if (hasToken) {
-    //   //TODO: token换取用户信息
-    //   localStorage.setItem('userInfo', '{}')
-    // } else {
-    //   if (code) {
-    //     let newQuery = JSON.parse(JSON.stringify(this.$route.query))
-    //     delete newQuery.code
-    //     delete newQuery.state
-    //     //TODO：code换取token
-    //     localStorage.setItem('token', '1')
-    //     this.$router.replace({
-    //       name: this.$route.name,
-    //       query: newQuery
-    //     })
-    //   } else {
-    //     getOAuth2Code()
-    //   }
-    // }
+    let storage = new Storage()
+    let token = localStorage.getItem('token')
+    const hasToken = !!token
+    const code = this.$route.query.code
+    if (hasToken) {
+      //TODO: token换取用户信息
+      getUserInfoByToken({
+        token
+      }).then((res) => {
+        let { data } = res.data || {}
+        localStorage.setItem('userInfo', JSON.stringify(data))
+      })
+    } else {
+      if (code) {
+        let newQuery = JSON.parse(JSON.stringify(this.$route.query))
+        delete newQuery.code
+        delete newQuery.state
+        //TODO：code换取token
+        getTokenByCode({
+          code
+        }).then((res) => {
+          if (res.code === HttpStatus.SUCCESS) {
+            let { access_token: token } = res.data || {}
+            localStorage.setItem('token', token)
+            this.$router.replace({
+              name: this.$route.name,
+              query: newQuery
+            })
+          }
+        })
+      } else {
+        getOAuth2Code()
+      }
+    }
   },
   mounted() {}
 }

@@ -1,5 +1,21 @@
 import axios from '@/libs/api.request'
 
+export const getTokenByCode = (params) => {
+  return axios.request({
+    params,
+    url: '/oauth2/token',
+    method: 'post'
+  })
+}
+
+export const getUserInfoByToken = (params) => {
+  return axios.request({
+    params,
+    url: '/oauth2/user',
+    method: 'post'
+  })
+}
+
 export const getTrainPage = (params) => {
   return axios.request({
     params,

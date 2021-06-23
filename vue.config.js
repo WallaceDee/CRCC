@@ -46,23 +46,18 @@ module.exports = {
     // })
   },
   chainWebpack: (config) => {
-    // const cdn = {
-    //         css: ['/static/css/iview.css'],
-    //         js: [
-    //             isProduction ? '/static/js/vue.runtime.min.js' : '/static/js/vue.js',
-    //             '/static/js/vuex.min.js',
-    //             '/static/js/vue-router.min.js'
-    //         ]
-    //     }
-    //     // html中添加cdn
-    //     //提示
-    //     //当在 multi-page 模式下构建时，webpack 配置会包含不一样的插件 (这时会存在多个 html-webpack-plugin 和 preload-webpack-plugin 的实例)。如果你试图修改这些插件的选项，请确认运行 vue inspect。
-    //     //multi-page 模式下plugin名为html-index,模式为 `html-${page名}``
-    // config.plugin('html').tap(args => {
-    //     //暴露变量cdn到index.html
-    //     args[0].cdn = cdn
-    //     return args
-    // })
+    const cdn = {
+      js: ['/static/js/const.js']
+    }
+    // html中添加cdn
+    //提示
+    //当在 multi-page 模式下构建时，webpack 配置会包含不一样的插件 (这时会存在多个 html-webpack-plugin 和 preload-webpack-plugin 的实例)。如果你试图修改这些插件的选项，请确认运行 vue inspect。
+    //multi-page 模式下plugin名为html-index,模式为 `html-${page名}``
+    config.plugin('html').tap((args) => {
+      //暴露变量cdn到index.html
+      args[0].cdn = cdn
+      return args
+    })
 
     config.output.chunkFilename(`js/crcc-[name].[chunkhash:8].js`)
     config.output.filename('js/crcc-[name].js')
