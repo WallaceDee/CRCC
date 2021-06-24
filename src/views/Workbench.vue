@@ -6,21 +6,21 @@
         <Divider type="vertical" style="background:#525b6f;" />
         <span class="platform-name">PIS系统智能运维平台</span>
       </div>
-      <!-- 
+
       <div>
         <Dropdown trigger="click" @on-click="onDropdownClick">
           <div class="dropdown-btn">
-            <span
+            <!-- <span
               class="avatar"
               :style="`background-image:url(${$store.state.avatar})`"
-            ></span>
-            {{ $store.state.nickname }}
+            ></span> -->
+            {{ userInfo.name }}
           </div>
-          <DropdownMenu slot="list">
+          <!-- <DropdownMenu slot="list">
             <DropdownItem name="exit">退出</DropdownItem>
-          </DropdownMenu>
+          </DropdownMenu> -->
         </Dropdown>
-      </div> -->
+      </div>
     </div>
     <div class="wrapper-container">
       <Row style="height:100%;">
@@ -56,9 +56,23 @@ import { Storage } from '../libs/tools'
 export default {
   name: 'Workbench',
   data() {
-    return {}
+    return {
+      userInfo: {}
+    }
   },
   methods: {
+    getUserInfo() {
+      //TODO: token换取用户信息
+      if (!localStorage.getItem('userInfo') && localStorage.getItem('token')) {
+        getUserInfoByToken().then((res) => {
+          let { data } = res.data || {}
+          this.userInfo = data
+          localStorage.setItem('userInfo', JSON.stringify(data))
+        })
+      } else {
+        this.userInfo = JSON.parse(localStorage.getItem('userInfo'))
+      }
+    },
     onDropdownClick(name) {
       if (name === 'exit') {
         localStorage.removeItem('token')
@@ -89,36 +103,36 @@ export default {
     let storage = new Storage()
     let token = localStorage.getItem('token')
     const hasToken = !!token
-    const code = this.$route.query.code
-    if (hasToken) {
-      //TODO: token换取用户信息
-      getUserInfoByToken({
-        token
-      }).then((res) => {
-        let { data } = res.data || {}
-        localStorage.setItem('userInfo', JSON.stringify(data))
-      })
-    } else {
-      if (code) {
+    const urlCode = this.$route.query.code
+    const sessionStorageCode = sessionStorage.getItem('code')
+    if (!hasToken) {
+      if (urlCode) {
         let newQuery = JSON.parse(JSON.stringify(this.$route.query))
         delete newQuery.code
         delete newQuery.state
+        sessionStorage.setItem('code', urlCode)
+        this.$router.replace({
+          name: this.$route.name,
+          query: newQuery
+        })
+      } else if (sessionStorageCode) {
         //TODO：code换取token
         getTokenByCode({
-          code
+          redirectUri: window.location.href,
+          code: sessionStorageCode
         }).then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             let { access_token: token } = res.data || {}
-            localStorage.setItem('token', token)
-            this.$router.replace({
-              name: this.$route.name,
-              query: newQuery
-            })
+            sessionStorage.removeItem('code')
+            localStorage.setItem('token', `Bearer ${token}`)
+            this.getUserInfo()
           }
         })
       } else {
         getOAuth2Code()
       }
+    } else {
+      this.getUserInfo()
     }
   },
   mounted() {}

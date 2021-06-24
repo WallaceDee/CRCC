@@ -12,7 +12,7 @@ export const getUserInfoByToken = (params) => {
   return axios.request({
     params,
     url: '/oauth2/user',
-    method: 'post'
+    method: 'get'
   })
 }
 
