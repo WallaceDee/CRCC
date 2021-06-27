@@ -2,29 +2,26 @@
   <div>
     <div class="wrapper-header">
       <div>
-        <img src alt="logo" height="20px" />
-        <Divider type="vertical" style="background:#525b6f;" />
+        <!-- <img src alt="logo" height="20px" />
+        <Divider type="vertical" style="background:#525b6f;" /> -->
         <span class="platform-name">PIS系统智能运维平台</span>
       </div>
 
-      <div>
+      <!-- <div>
         <Dropdown trigger="click" @on-click="onDropdownClick">
           <div class="dropdown-btn">
-            <!-- <span
+            <span
               class="avatar"
               :style="`background-image:url(${$store.state.avatar})`"
-            ></span> -->
+            ></span>
             {{ userInfo.name }}
           </div>
-          <!-- <DropdownMenu slot="list">
-            <DropdownItem name="exit">退出</DropdownItem>
-          </DropdownMenu> -->
         </Dropdown>
-      </div>
+      </div> -->
     </div>
     <div class="wrapper-container">
       <Row style="height:100%;">
-        <Col style="height:100%;overflow:auto;" class="nav">
+        <!-- <Col style="height:100%;overflow:auto;" class="nav">
           <Menu
             width="auto"
             :active-name="activeName"
@@ -40,9 +37,17 @@
             </MenuItem>
             <MenuItem name="List"> 故障查询 </MenuItem>
           </Menu>
-        </Col>
+        </Col> -->
         <Col class="body">
-          <router-view />
+          <Tabs :value="activeName" @on-click="onTabsClick">
+            <TabPane
+              v-for="{ label, name } in tabPaneList"
+              :label="label"
+              :name="name"
+              :key="name"
+              ><router-view v-if="activeName === name"
+            /></TabPane>
+          </Tabs>
         </Col>
       </Row>
     </div>
@@ -57,10 +62,19 @@ export default {
   name: 'Workbench',
   data() {
     return {
+      tabPaneList: [
+        { label: '首页', name: 'Index' },
+        { label: '列车监控', name: 'Monitor' },
+        { label: '故障统计', name: 'Statistics' },
+        { label: '故障查询', name: 'List' }
+      ],
       userInfo: {}
     }
   },
   methods: {
+    onTabsClick(name) {
+      this.$router.push({ name })
+    },
     getUserInfo() {
       //TODO: token换取用户信息
       if (!localStorage.getItem('userInfo') && localStorage.getItem('token')) {
@@ -99,43 +113,45 @@ export default {
       return this.$route.name
     }
   },
-  created() {
-    let storage = new Storage()
-    let token = localStorage.getItem('token')
-    const hasToken = !!token
-    const urlCode = this.$route.query.code
-    const sessionStorageCode = sessionStorage.getItem('code')
-    if (!hasToken) {
-      if (urlCode) {
-        let newQuery = JSON.parse(JSON.stringify(this.$route.query))
-        delete newQuery.code
-        delete newQuery.state
-        sessionStorage.setItem('code', urlCode)
-        this.$router.replace({
-          name: this.$route.name,
-          query: newQuery
-        })
-      } else if (sessionStorageCode) {
-        //TODO：code换取token
-        getTokenByCode({
-          redirectUri: window.location.href,
-          code: sessionStorageCode
-        }).then((res) => {
-          if (res.code === HttpStatus.SUCCESS) {
-            let { access_token: token } = res.data || {}
-            sessionStorage.removeItem('code')
-            localStorage.setItem('token', `Bearer ${token}`)
-            this.getUserInfo()
-          }
-        })
-      } else {
-        getOAuth2Code()
-      }
-    } else {
-      this.getUserInfo()
-    }
-  },
-  mounted() {}
+  // created() {
+  //   let storage = new Storage()
+  //   let token = localStorage.getItem('token')
+  //   const hasToken = !!token
+  //   const urlCode = this.$route.query.code
+  //   const sessionStorageCode = sessionStorage.getItem('code')
+  //   if (!hasToken) {
+  //     if (urlCode) {
+  //       let newQuery = JSON.parse(JSON.stringify(this.$route.query))
+  //       delete newQuery.code
+  //       delete newQuery.state
+  //       sessionStorage.setItem('code', urlCode)
+  //       this.$router.replace({
+  //         name: this.$route.name,
+  //         query: newQuery
+  //       })
+  //     } else if (sessionStorageCode) {
+  //       //TODO：code换取token
+  //       getTokenByCode({
+  //         redirectUri: window.location.href,
+  //         code: sessionStorageCode
+  //       }).then((res) => {
+  //         if (res.code === HttpStatus.SUCCESS) {
+  //           let { access_token: token } = res.data || {}
+  //           sessionStorage.removeItem('code')
+  //           localStorage.setItem('token', `Bearer ${token}`)
+  //           this.getUserInfo()
+  //         }
+  //       })
+  //     } else {
+  //       getOAuth2Code()
+  //     }
+  //   } else {
+  //     this.getUserInfo()
+  //   }
+  // },
+  mounted() {
+    console.log(this.$route)
+  }
 }
 </script>
 <style lang="less">
@@ -223,7 +239,8 @@ table {
   height: 100%;
   overflow: auto;
   padding: 20px;
-  width: calc(~'100% - 200px');
+  // width: calc(~'100% - 200px');
+  width: 100%;
   box-sizing: border-box;
   min-width: 1040px;
   background-color: #171c24;

@@ -189,6 +189,7 @@
 </template>
 <script>
 import {
+  getTrainPage,
   getTrainInfo,
   getTrainFault,
   confirmFault,
@@ -323,7 +324,23 @@ export default {
         {
           title: '指导意见',
           key: 'residual_remark',
-          minWidth: 20
+          minWidth: 20,
+          render: (h, { row: { residual_remark: content } }) => {
+            return h(
+              'a',
+              {
+                on: {
+                  click: () => {
+                    this.$Modal.info({
+                      title: '操作指导',
+                      content
+                    })
+                  }
+                }
+              },
+              '点击查看'
+            )
+          }
         }
       ],
       tableData: [],
@@ -338,6 +355,30 @@ export default {
     }
   },
   methods: {
+    getFirstTrainCode() {
+      return getTrainPage({
+        pageNum: 1,
+        pageSize: 1
+      })
+        .then((res) => {
+          if (res.code === HttpStatus.SUCCESS) {
+            if (
+              res.data.records &&
+              res.data.records.length &&
+              !localStorage.getItem('currentTrainCode')
+            ) {
+              localStorage.setItem(
+                'currentTrainCode',
+                res.data.records[0].trainCode
+              )
+              this.onTrainCodeChange(res.data.records[0].trainCode)
+            }
+          }
+        })
+        .catch((err) => {
+          console.error(err)
+        })
+    },
     onTrainCodeChange(trainCode) {
       console.log(trainCode)
       this.$router.replace({
@@ -481,10 +522,19 @@ export default {
     }
   },
   mounted() {
-    localStorage.setItem('currentTrainCode', this.trainCode)
-    this.getTrainInfo()
-    this.getTableData()
-    this.getTrainTodayFault()
+    if (this.trainCode) {
+      localStorage.setItem('currentTrainCode', this.trainCode)
+      this.getTrainInfo()
+      this.getTableData()
+      this.getTrainTodayFault()
+    } else {
+      let trainCode = localStorage.getItem('currentTrainCode')
+      if (trainCode) {
+        this.onTrainCodeChange(trainCode)
+      } else {
+        this.getFirstTrainCode()
+      }
+    }
   }
 }
 </script>

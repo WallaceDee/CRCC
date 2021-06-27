@@ -189,6 +189,27 @@ export default {
                   [h('a', '未确认')]
                 )
           }
+        },
+        {
+          title: '操作指导',
+          key: 'checkTime',
+          minWidth: 20,
+          render: (h, { row: { residual_remark: content } }) => {
+            return h(
+              'a',
+              {
+                on: {
+                  click: () => {
+                    this.$Modal.info({
+                      title: '操作指导',
+                      content
+                    })
+                  }
+                }
+              },
+              '点击查看'
+            )
+          }
         }
       ],
       tableData: [],

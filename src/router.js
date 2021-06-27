@@ -18,7 +18,7 @@ const routes = [
         component: (resolve) => require(['./views/Index'], resolve)
       },
       {
-        path: 'Monitor/:trainCode',
+        path: 'Monitor/:trainCode?',
         name: 'Monitor',
         meta: {
           title: '列车监控'

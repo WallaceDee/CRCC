@@ -1,6 +1,6 @@
 <template>
   <div class="index">
-    <div class="title">首页</div>
+    <!-- <div class="title">首页</div> -->
     <SectionCard title="列车运行信息">
       <div style="margin-bottom:10px">
         <Button
