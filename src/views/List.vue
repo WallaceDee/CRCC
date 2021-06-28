@@ -194,7 +194,7 @@ export default {
           title: '操作指导',
           key: 'checkTime',
           minWidth: 20,
-          render: (h, { row: { residual_remark: content } }) => {
+          render: (h, { row: { residualRemark } }) => {
             return h(
               'a',
               {
@@ -202,7 +202,7 @@ export default {
                   click: () => {
                     this.$Modal.info({
                       title: '操作指导',
-                      content
+                      content: `<pre>${residualRemark}</pre>`
                     })
                   }
                 }

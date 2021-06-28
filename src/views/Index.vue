@@ -37,12 +37,12 @@
             :data="barChartData"
             :padding="[20, 30, 50, 30]"
             :scale="{
-              dataKey: 'faultNum'
+              dataKey: '故障数'
             }"
           >
             <v-tooltip />
             <v-axis />
-            <v-bar position="trainCode*faultNum" />
+            <v-bar position="trainCode*故障数" />
           </v-chart>
           <span v-else>暂无数据</span>
         </SectionCard>
@@ -243,6 +243,11 @@ export default {
       })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
+            res.data.map((item) => {
+              item['故障数'] = item.faultNum
+              return item
+            })
+            console.log(res.data)
             this.barChartData = res.data
           }
         })

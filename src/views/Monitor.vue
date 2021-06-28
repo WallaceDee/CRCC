@@ -128,7 +128,7 @@
       </Col>
       <Col span="5">
         <SectionCard
-          title="本日故障数"
+          title="历史故障数"
           style="margin-left:10px;max-height:350px;height:100%;"
         >
           <Spin fix v-if="chartLoading"></Spin>
@@ -145,14 +145,14 @@
           >
             <v-tooltip title="devType" />
             <v-axis />
-            <v-bar position="devType*faultNum" />
+            <v-bar position="devType*故障数" />
           </v-chart>
           <span v-else>暂无数据</span>
         </SectionCard>
       </Col>
       <Col span="4">
         <SectionCard
-          title="本日故障分布"
+          title="历史故障分布"
           style="margin-left:10px;max-height:350px;height:100%;"
         >
           <Spin fix v-if="chartLoading"></Spin>
@@ -323,9 +323,9 @@ export default {
         },
         {
           title: '指导意见',
-          key: 'residual_remark',
+          key: 'residualRemark',
           minWidth: 20,
-          render: (h, { row: { residual_remark: content } }) => {
+          render: (h, { row: { residualRemark } }) => {
             return h(
               'a',
               {
@@ -333,7 +333,7 @@ export default {
                   click: () => {
                     this.$Modal.info({
                       title: '操作指导',
-                      content
+                      content: `<pre>${residualRemark}</pre>`
                     })
                   }
                 }
@@ -501,12 +501,16 @@ export default {
       })
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
+            res.data.map((item) => {
+              item['故障数'] = item.faultNum
+              return item
+            })
             this.barChartData = res.data
             const DataSet = require('@antv/data-set')
             const dv = new DataSet.View().source(res.data)
             dv.transform({
               type: 'percent',
-              field: 'faultNum',
+              field: '故障数',
               dimension: 'devType',
               as: 'percent'
             })
