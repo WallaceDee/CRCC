@@ -29,7 +29,7 @@
     </SectionCard>
     <Row style="margin-top:20px;">
       <Col span="12">
-        <SectionCard title="本日故障数" style="margin-right:10px;">
+        <SectionCard title="历史故障数" style="margin-right:10px;">
           <v-chart
             v-if="barChartData.length"
             :forceFit="true"

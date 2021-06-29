@@ -128,47 +128,54 @@ export default {
           align: 'center'
         },
         {
+          align: 'center',
           title: '列车号',
           key: 'trainCode',
-          minWidth: 30
+          minWidth: 70
         },
         {
+          align: 'center',
           title: '车厢号',
           key: 'coachNo',
           minWidth: 30
         },
         {
+          align: 'center',
           title: '设备',
           key: 'devCode',
-          minWidth: 20
+          minWidth: 50
         },
         {
           title: '故障描述',
           key: 'description',
-          minWidth: 80
+          minWidth: 90
         },
         {
+          align: 'center',
           title: '故障等级',
           key: 'faultLevel',
-          minWidth: 20,
+          minWidth: 60,
           render: (h, { row: { faultLevel } }) => {
             return h('span', FaultLevelMap.get(faultLevel))
           }
         },
         {
+          align: 'center',
           title: '发生时间',
           key: 'accessTime',
-          minWidth: 60
+          minWidth: 120
         },
         {
+          align: 'center',
           title: '恢复时间',
-          key: 'accessTime',
-          minWidth: 60
+          key: 'fixTime',
+          minWidth: 120
         },
         {
+          align: 'center',
           title: '确认状态',
           key: 'checkTime',
-          minWidth: 20,
+          minWidth: 40,
           render: (h, { row: { id, checkTime } }) => {
             return checkTime
               ? h('span', '已确认')
@@ -191,9 +198,10 @@ export default {
           }
         },
         {
+          align: 'center',
           title: '操作指导',
           key: 'checkTime',
-          minWidth: 20,
+          minWidth: 40,
           render: (h, { row: { residualRemark } }) => {
             return h(
               'a',
@@ -207,7 +215,7 @@ export default {
                   }
                 }
               },
-              '点击查看'
+              '查看'
             )
           }
         }
