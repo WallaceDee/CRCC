@@ -15,6 +15,8 @@
         >
       </div>
       <Table
+        disabled-hover
+        size="small"
         :columns="columns"
         :data="tableData"
         :loading="tableLoading"
@@ -124,9 +126,9 @@ export default {
           align: 'center'
         },
         {
+          width: 150,
           title: '列车号',
           key: 'trainCode',
-          align: 'center',
           render: (h, { row: { trainCode, healthyStatus } }) => {
             return h(
               'router-link',

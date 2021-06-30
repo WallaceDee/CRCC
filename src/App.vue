@@ -29,8 +29,13 @@ html {
 * {
   -webkit-overflow-scrolling: touch;
 }
-#app,
 body,
 html {
+  height: 1080px;
+  // overflow: hidden;
+}
+#app {
+  height: 1080px;
+  overflow: auto;
 }
 </style>

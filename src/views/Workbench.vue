@@ -1,13 +1,13 @@
 <template>
-  <div>
-    <div class="wrapper-header">
+  <!-- <div> -->
+  <!-- <div class="wrapper-header">
       <div>
-        <!-- <img src alt="logo" height="20px" />
-        <Divider type="vertical" style="background:#525b6f;" /> -->
+        <img src alt="logo" height="20px" />
+        <Divider type="vertical" style="background:#525b6f;" />
         <span class="platform-name">PIS系统智能运维平台</span>
       </div>
 
-      <!-- <div>
+      <div>
         <Dropdown trigger="click" @on-click="onDropdownClick">
           <div class="dropdown-btn">
             <span
@@ -17,11 +17,11 @@
             {{ userInfo.name }}
           </div>
         </Dropdown>
-      </div> -->
-    </div>
-    <div class="wrapper-container">
-      <Row style="height:100%;">
-        <!-- <Col style="height:100%;overflow:auto;" class="nav">
+      </div>
+    </div> -->
+  <!-- <div class="wrapper-container"> -->
+  <Row style="height:100%;">
+    <!-- <Col style="height:100%;overflow:auto;" class="nav">
           <Menu
             width="auto"
             :active-name="activeName"
@@ -38,20 +38,20 @@
             <MenuItem name="List"> 故障查询 </MenuItem>
           </Menu>
         </Col> -->
-        <Col class="body">
-          <Tabs :value="activeName" @on-click="onTabsClick">
-            <TabPane
-              v-for="{ label, name } in tabPaneList"
-              :label="label"
-              :name="name"
-              :key="name"
-              ><router-view v-if="activeName === name"
-            /></TabPane>
-          </Tabs>
-        </Col>
-      </Row>
-    </div>
-  </div>
+    <Col class="body">
+      <Tabs :value="activeName" @on-click="onTabsClick">
+        <TabPane
+          v-for="{ label, name } in tabPaneList"
+          :label="label"
+          :name="name"
+          :key="name"
+          ><router-view v-if="activeName === name"
+        /></TabPane>
+      </Tabs>
+    </Col>
+  </Row>
+  <!-- </div> -->
+  <!-- </div> -->
 </template>
 <script>
 import { getOAuth2Code } from '../libs/util'
@@ -156,7 +156,7 @@ export default {
 </script>
 <style lang="less">
 body {
-  min-width: 1240px;
+  // min-width: 1240px;
 }
 .tips {
   font-size: 12px;
@@ -216,6 +216,14 @@ table {
     padding: 15px;
   }
 }
+.ivu-table {
+  color: #fff;
+}
+.ivu-table,
+.ivu-table th,
+.ivu-table td {
+  background-color: #121620;
+}
 </style>
 <style lang="less" scoped>
 @headerHeight: 54px;
@@ -242,8 +250,8 @@ table {
   // width: calc(~'100% - 200px');
   width: 100%;
   box-sizing: border-box;
-  min-width: 1040px;
-  background-color: #171c24;
+  // min-width: 1040px;
+  background-color: #000;
 }
 .dropdown-btn {
   color: #fff;
@@ -292,10 +300,10 @@ table {
   }
 }
 .wrapper-container {
-  height: calc(~'100vh - '+@headerHeight);
-  overflow: auto;
+  // height: calc(~'100vh - '+@headerHeight);
+  // margin: @headerHeight auto 0 auto;
+
   background: #fff;
-  margin: @headerHeight auto 0 auto;
   box-shadow: 0 1px 1px 0 rgba(0, 0, 0, 0.1);
 }
 .ivu-menu {

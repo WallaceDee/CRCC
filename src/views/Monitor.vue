@@ -113,12 +113,15 @@
       <Col span="15">
         <SectionCard title="故障记录">
           <Table
+            disabled-hover
+            size="small"
             :columns="columns"
             :data="tableData"
             :loading="tableLoading"
           ></Table>
           <br />
           <Page
+            size="small"
             :page-size="PAGE_SIZE"
             :total="pageTotal"
             show-elevator
@@ -294,7 +297,7 @@ export default {
         {
           title: '发生时间',
           key: 'accessTime',
-          minWidth: 60
+          minWidth: 100
         },
         {
           title: '确认状态',
@@ -562,6 +565,7 @@ export default {
   display: flex;
 
   h3 {
+    color: #fff;
     flex: 1;
     justify-content: center;
   }
@@ -582,7 +586,7 @@ export default {
       padding-top: 2px;
       width: 74.59%;
       border: 1px solid #fff;
-      border-radius: 50% 0 0 50%;
+      border-radius: 40% 0 0 40%;
       position: relative;
       display: flex;
       flex-wrap: wrap;
@@ -593,7 +597,7 @@ export default {
       }
       &.right {
         justify-content: flex-start;
-        border-radius: 0 50% 50% 0;
+        border-radius: 0 40% 40% 0;
       }
     }
     .item {

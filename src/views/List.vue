@@ -89,6 +89,8 @@
         </FormItem>
       </Form>
       <Table
+        disabled-hover
+        size="small"
         :columns="columns"
         :data="tableData"
         :loading="tableLoading"
@@ -111,7 +113,7 @@ import {
   getDevTypeList
 } from '../api'
 import { HttpStatus, FaultLevelMap, DevTypeMap } from '../libs/constant'
-const PAGE_SIZE = 10
+const PAGE_SIZE = 15
 export default {
   name: 'List',
   data() {
