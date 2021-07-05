@@ -64,7 +64,7 @@
         </FormItem>
         <FormItem>
           <Checkbox v-model="searchForm.isHidRepair">隐藏已恢复故障</Checkbox>
-          <Checkbox v-model="searchForm.isHidConfirm">显示已确认故障</Checkbox>
+          <Checkbox v-model="searchForm.isHidConfirm">隐藏已确认故障</Checkbox>
         </FormItem>
         <FormItem>
           <Button
@@ -332,8 +332,8 @@ export default {
     },
     onDateTimeRangeChange(value) {
       if (value[0]) {
-        this.searchForm.startTime = value[0]
-        this.searchForm.endTime = value[1]
+        this.searchForm.startTime = value[0] + ':00'
+        this.searchForm.endTime = value[1] + ':00'
       } else {
         this.searchForm.startTime = null
         this.searchForm.endTime = null

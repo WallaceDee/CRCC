@@ -1,5 +1,5 @@
 <template>
-  <Row style="height:700px">
+  <Row style="height:800px">
     <Col span="12" style="height:100%">
       <SectionCard
         title="各列车故障统计"
@@ -54,17 +54,35 @@
     </Col>
     <Col span="12" style="height:100%">
       <SectionCard
-        :title="`${itemForm.trainCode} 车各设备故障统计`"
+        title="各车各设备故障统计"
         style="margin-left:10px;height:100%;"
       >
         <Spin fix v-if="itemChartLoading"></Spin>
         <Form ref="itemForm" :model="itemForm">
-          <FormItem label="列车号" prop="trainCode">
+          <FormItem prop="trainCode">
+            <Checkbox
+              :indeterminate="trainIndeterminate1"
+              :value="trainCheckAll1"
+              @click.prevent.native="handleTrainCheckAll1"
+              >全选</Checkbox
+            >
+            <CheckboxGroup
+              v-model="itemForm.trainCode"
+              @on-change="checkCarAllGroupChange1"
+            >
+              <Checkbox
+                v-for="(item, index) in trainCodeOptions"
+                :key="index"
+                :label="item"
+                >{{ item }}</Checkbox
+              >
+            </CheckboxGroup>
             <!-- :remote-method="getAllTrainList" -->
             <!-- :loading="trainCodeLoading" -->
             <!-- @on-open-change="onTrainCodeSelectOpen" -->
-            <Select
-              style="width:300px;"
+            <!-- <Select
+              multiple
+              style="width:300px;max-height:100px;"
               clearable
               v-model="itemForm.trainCode"
               filterable
@@ -76,7 +94,7 @@
                 :key="index"
                 >{{ trainCode }}</Option
               >
-            </Select>
+            </Select> -->
           </FormItem>
           <FormItem>
             <div slot="label">
@@ -152,6 +170,8 @@ export default {
       style: { stroke: '#fff', lineWidth: 1 },
       trainIndeterminate: false,
       trainCheckAll: true,
+      trainIndeterminate1: false,
+      trainCheckAll1: true,
       trainForm: {
         timeType: 'month',
         codes: []
@@ -161,7 +181,7 @@ export default {
       itemForm: {
         timeType: 'month',
         devType: [],
-        trainCode: ''
+        trainCode: []
       }
     }
   },
@@ -300,6 +320,32 @@ export default {
         this.trainCheckAll = false
       }
     },
+    handleTrainCheckAll1() {
+      if (this.trainIndeterminate1) {
+        this.trainCheckAll1 = false
+      } else {
+        this.trainCheckAll1 = !this.trainCheckAll1
+      }
+      this.trainIndeterminate1 = false
+
+      if (this.trainCheckAll1) {
+        this.itemForm.trainCode = this.trainCodeOptions
+      } else {
+        this.itemForm.trainCode = []
+      }
+    },
+    checkCarAllGroupChange1(data) {
+      if (data.length === this.trainCodeOptions.length) {
+        this.trainIndeterminate1 = false
+        this.trainCheckAll1 = true
+      } else if (data.length > 0) {
+        this.trainIndeterminate1 = true
+        this.trainCheckAll1 = false
+      } else {
+        this.trainIndeterminate1 = false
+        this.trainCheckAll1 = false
+      }
+    },
     handleItemCheckAll() {
       if (this.itemIndeterminate) {
         this.itemCheckAll = false
@@ -340,7 +386,7 @@ export default {
               return item.trainCode
             })
             this.$set(this.trainForm, 'codes', this.trainCodeOptions)
-            this.$set(this.itemForm, 'trainCode', this.trainCodeOptions[0])
+            this.$set(this.itemForm, 'trainCode', this.trainCodeOptions)
             this.getDevTypeList().then(() => {
               this.getMultiItemChartData()
             })
@@ -379,7 +425,7 @@ export default {
       getChartData({
         dimension: 'devType',
         timeType,
-        codes: trainCode,
+        codes: trainCode.join(','),
         devType: devType
           .map((item) => {
             return DevTypeMap.get(item)
@@ -390,6 +436,8 @@ export default {
           if (res.code === HttpStatus.SUCCESS) {
             this.itemChartHistoryData[timeType] = res.data
             this.getItemChartData(res.data.charData)
+          } else {
+            this.getItemChartData([])
           }
           this.itemChartLoading = false
         })
