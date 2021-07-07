@@ -164,7 +164,7 @@ export default {
       trainChartHistoryData: {},
       scale: {
         dataKey: 'faultNum',
-        min: 0
+        minTickInterval: 1
       },
       height: 400,
       style: { stroke: '#fff', lineWidth: 1 },

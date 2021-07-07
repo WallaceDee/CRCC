@@ -121,6 +121,7 @@
           ></Table>
           <br />
           <Page
+            show-total
             size="small"
             :page-size="PAGE_SIZE"
             :total="pageTotal"
@@ -142,7 +143,7 @@
             :data="barChartData"
             :scale="{
               dataKey: 'sales',
-              tickInterval: 1
+              min: 1
             }"
             :padding="[20, 30, 50, 30]"
           >

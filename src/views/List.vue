@@ -97,6 +97,7 @@
       ></Table>
       <br />
       <Page
+        show-total
         :page-size="PAGE_SIZE"
         :total="pageTotal"
         show-elevator

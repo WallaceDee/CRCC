@@ -23,6 +23,7 @@
       ></Table>
       <!-- <br />
       <Page
+        show-total
         :page-size="PAGE_SIZE"
         :total="pageTotal"
         show-elevator
@@ -39,7 +40,8 @@
             :data="barChartData"
             :padding="[20, 30, 50, 30]"
             :scale="{
-              dataKey: '故障数'
+              dataKey: '故障数',
+              minTickInterval: 1
             }"
           >
             <v-tooltip />
@@ -93,7 +95,24 @@ import {
   HealthyStatusColorMap,
   HealthyStatusTagMap
 } from '../libs/constant'
-
+const DEFAULT_PIE_DATA = [
+  {
+    faultNum: 0,
+    faultCode: 'ACSU'
+  },
+  {
+    faultNum: 0,
+    faultCode: 'DACU'
+  },
+  {
+    faultNum: 0,
+    faultCode: 'PACU'
+  },
+  {
+    faultNum: 0,
+    faultCode: 'PECU'
+  }
+]
 const PAGE_SIZE = 9999
 export default {
   name: 'Index',
@@ -264,7 +283,7 @@ export default {
         .then((res) => {
           if (res.code === HttpStatus.SUCCESS) {
             const DataSet = require('@antv/data-set')
-            const dv = new DataSet.View().source(res.data)
+            const dv = new DataSet.View().source(res.data || DEFAULT_PIE_DATA)
             dv.transform({
               type: 'percent',
               field: 'faultNum',
