@@ -149,6 +149,11 @@ export default {
           minWidth: 50
         },
         {
+          title: '故障代码',
+          key: 'faultCode',
+          minWidth: 50
+        },
+        {
           title: '故障描述',
           key: 'description',
           minWidth: 90
