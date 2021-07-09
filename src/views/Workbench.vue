@@ -39,7 +39,7 @@
           </Menu>
         </Col> -->
     <Col class="body">
-      <Tabs :value="activeName" @on-click="onTabsClick">
+      <Tabs type="card" :value="activeName" @on-click="onTabsClick">
         <TabPane
           v-for="{ label, name } in tabPaneList"
           :label="label"
@@ -223,6 +223,19 @@ table {
 .ivu-table th,
 .ivu-table td {
   background-color: #121620;
+}
+.ivu-tabs-tab {
+  background: #121620 !important;
+
+  border-color: #121620 !important;
+}
+.ivu-tabs-bar {
+  border-color: #272727;
+}
+.ivu-tabs.ivu-tabs-card > .ivu-tabs-bar .ivu-tabs-tab-active {
+  background: #121620 !important;
+  border-color: #272727 !important;
+  color: #fff;
 }
 </style>
 <style lang="less" scoped>
